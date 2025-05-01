@@ -1,0 +1,618 @@
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Five Nights at Freddy's Universe</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Roboto&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #0a0a0a;
+            --text-color: #ffffff;
+            --accent-color: #5902a0;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            scroll-behavior: smooth;
+        }
+
+        header {
+            background-color: #1a1a1a;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border:#0a0a0a solid 2px;
+        }
+
+        header h1 {
+            font-family: 'Creepster', cursive;
+            color: var(--accent-color);
+            margin: 0;
+        }
+
+        nav a {
+            color: white;
+            position: relative;
+            display: inline-block;
+            margin: 0 10px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s, transform 0.3s;
+        }
+
+        nav a:hover {
+        color: #ffffff;
+        transform: scale(1.1);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #ffffff;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        nav a:hover::after {
+            transform: scaleX(1);
+        }
+
+        #theme-toggle {
+            background: var(--accent-color);
+            color: var(--text-color);
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: 0.3s, transform 0.3s ease;
+        }
+        #theme-toggle:hover{
+            transform: scale(1.2);
+            background-color: #ffffff;
+        }
+        section{
+            text-align: center;
+        }
+        .about {
+        background-image: url('https://www.impericon.com/cdn/shop/articles/Five_Nights_At_Freddys.webp?v=1718698070');
+        background-size: cover;
+        background-position: center;
+        padding: 210px 20px;
+        color: white;
+        text-align: center;
+        }
+        
+        
+        
+        .cards {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .card {
+        position: relative;
+        width: 200px;
+        height: 300px;
+        background-color: #000814;
+        border-radius: 20px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        color: white;
+        text-align: center;
+        padding: 10px;
+        box-sizing: border-box;
+        z-index: 1;
+        }
+
+
+        .card::before {
+        content: "";
+        position: absolute;
+        top: -4px;
+        left: -4px;
+        right: -4px;
+        bottom: -4px;
+        background: linear-gradient(45deg, #70247a, #49025f, #510c63, #6b1818, #5f0101);
+        background-size: 400% 400%;
+        border-radius: 24px;
+        z-index: -1;
+        animation: rotateBorder 6s linear infinite;
+        filter: blur(6px);
+        }
+
+
+        @keyframes rotateBorder {
+        0% {
+            background-position: 0% 50%;
+        }
+        50% {
+            background-position: 100% 50%;
+        }
+        100% {
+            background-position: 0% 50%;
+        }
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+        .characters{
+            padding: 100px;
+        }
+        .characters h2{
+            border-bottom: 2px solid;
+            border-image: linear-gradient(to right, rgb(226, 0, 0), rgb(63, 12, 88)) 1;
+        }
+        .card img {
+            width: 100%;
+            border-radius: 10px;
+        }
+
+        #modal {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999
+        }
+
+        #modal.hidden {
+        display: none;
+        }
+
+        .modal-content {
+            background: #333;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            position: relative;
+            max-width: 90%;
+            z-index: 9999
+        }
+
+        #modal-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--accent-color);
+            z-index: 9999
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        form input, form textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+        }
+
+        form button {
+            background: var(--accent-color);
+            color: var(--text-color);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .social-links a {
+            color: var(--accent-color);
+            margin: 0 10px;
+            text-decoration: none;
+        }
+        .lore{
+            background-image: url('https://i.pinimg.com/736x/fc/30/9b/fc309b36f70fb55e10cace2756b5dd7e.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            padding:120px 100;
+            color:#ffffff;
+        }
+        .lore h2{
+            border-bottom: 4px solid #ffffff;
+            color:white;
+        }
+        footer {
+        margin-top: 16px;
+        border-top: #5902a0 2px solid;
+        color: --text-color;
+        padding: 40px 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .footer-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        gap: 40px;
+        flex-wrap: wrap;
+        }
+
+        .footer-item {
+        flex: 1;
+        min-width: 200px;
+        }
+
+        .footer-item h3 {
+        color: --text-color;
+        margin-bottom: 15px;
+        }
+
+        .footer-item ul {
+        list-style: none;
+        padding: 0;
+        }
+
+        .footer-item li {
+        margin-bottom: 10px;
+        }
+
+        .footer-item a {
+        color: #aaa;
+        text-decoration: none;
+        transition: color 0.3s;
+        }
+
+        .footer-item a:hover {
+            color: var(--text-color)
+        }
+        @media screen and (max-width: 768px) {
+    body {
+        width: fit-content;
+        font-size: 14px;
+        padding: 0;
+        margin: 0;
+    }
+
+    header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 15px 5px;
+    }
+
+    nav {
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    nav a {
+        margin: 5px 0;
+        display: block;
+    }
+
+    .about {
+        padding: 25px 5px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .cards {
+        flex-direction: column;
+        justify-content: center;
+        margin-top: 30px;
+    }
+
+    .card {
+        width: 100%;
+        max-width: 320px;
+        margin: 0 auto;
+    }
+
+    .card img {
+        width: 100%;
+        height: auto;
+        object-fit: contain;
+    }
+
+    .characters {
+        padding: 60px 15px;
+    }
+
+    .characters h2 {
+        border-bottom: 2px solid;
+        border-image: linear-gradient(to right, rgb(226, 0, 0), rgb(63, 12, 88)) 1;
+    }
+
+    .lore {
+        padding: 80px 20px;
+        text-align: center;
+    }
+
+    footer {
+        padding: 20px 10px;
+        font-size: 14px;
+    }
+
+    .footer-container {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 20px;
+        padding: 20px 10px;
+    }
+
+    .footer-item {
+        width: 100%;
+        max-width: 300px;
+        margin: 0 auto;
+    }
+
+    #intro-screen {
+        padding: 20px 10px;
+        text-align: center;
+    }
+
+    #intro-screen img {
+        width: 150px;
+        height: auto;
+    }
+
+    #intro-screen p {
+        font-size: 1.2rem;
+        padding: 0 10px;
+        line-height: 1.5;
+    }
+
+    .social-links {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .social-links a {
+        font-size: 18px;
+    }
+}
+
+    
+    </style>
+    
+</head>
+<body>
+
+    
+    <header id="header">
+        <img src="https://static.wikia.nocookie.net/logopedia/images/0/06/FNAF_Alt.png/revision/latest?cb=20240206090833" alt="" width="200px" height="100px">
+        <nav>
+            <a href="#about">О FNaF 1</a>
+            <a href="#characters">Персонажи</a>
+            <a href="#lore">сюжет игры</a>
+            <a href="#">главная страница</a>
+        </nav>
+        <button id="theme-toggle"> 
+            <img src="https://static-00.iconduck.com/assets.00/dark-mode-icon-256x256-sslqdqcc.png" alt="" width="25px" height="25px" >
+        </button>
+    </header>
+
+  
+    <section id="about" class="about">
+        <h2>о Five Nights at Freddy's</h2>
+        
+        <p>Five Nights at Freddy’s — независимая компьютерная игра в жанрах point-and-click и survival horror, разработанная и изданная в 2014 году американским игровым дизайнером Скоттом Коутоном</p>
+    </section>
+
+    <section id="characters" class="characters">
+        <h2>Аниматроники</h2>
+        <div class="cards">
+            <div class="card" data-character="freddy">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkZZpfIDKq0sAbM2kJAXGnpvWRLGSld476WA&s" alt="Freddy" width="100px" height="250px">
+                <p>Freddy Fazbear</p>
+            </div>
+            <div class="card" data-character="chica">
+                <img src="https://static.wikia.nocookie.net/freddy-fazbears-pizza/images/5/5f/Chica_Official_Render.jpeg/revision/latest/scale-to-width-down/1200?cb=20190526204325" alt="Chica" width="100px" height="250px">
+                <p>Chica the Chicken</p>
+            </div>
+            <div class="card" data-character="bonnie">
+                <img src="data:image/jpeg;base64,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" alt="Bonnie" width="100px" height="250px">
+                <p>Bonnie the Bunny</p>
+            </div>
+            <div class="card" data-character="foxy">
+                <img src="data:image/jpeg;base64,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" alt="foxy" width="100px" height="250px">
+                <p>Foxy the fox</p>
+        </div>
+    </section>
+
+    
+    <div id="modal" class="hidden">
+        <div class="modal-content">
+            <span id="modal-close">&times;</span>
+            <h3 id="modal-title"></h3>
+            <p id="modal-description"></p>
+            <img id="modal-image" src="" alt="">
+        </div>
+    </div>
+
+    <section class="lore">
+        <h2>сюжет первой части</h2>
+        <div class="lore">
+            <p>
+                Игрок выступает в роли ночного охранника — Майкла Афтона, взявшим себе псевдоним Майк Шмидт. Действия игры происходят в «Пиццерии Фредди Фазбера» в начале 90-х. По ночам аниматроники свободно ходят по пиццерии и предпринимают попытки проникнуть в офис, чтобы убить Майка. Поначалу ему названивает Телефонный парень, чтобы дать инструкции, ценные советы и другую информацию по сюжету и происходящему, но на четвёртую ночь Телефонный парень умирает от рук аниматроников.
+            </p>
+            <p>
+                После прохождения пятой ночи Майк Шмидт получает чек с зарплатой в $120. После прохождения шестой ночи, зарплата повышается на $0.5. После седьмой (своей) ночи Майка увольняют по причине порчи аниматроников (проникновение в систему ИИ аниматроников), непрофессионализма и дурного запаха.
+            </p>
+            <p>
+                Помимо всего прочего, Телефонный парень объясняет поведение аниматроников тем, что им намерено позволили ходить в «режиме свободного роуминга», чтобы их сервоприводы не заблокировались, а также специальной программой, из-за которой аниматроники видят в охранниках эндоскелеты и стараются как можно скорей засунуть их в костюм Фредди Фазбера, т.к. посетители не должны видеть голый эндоскелет. Однако, всё это лишь враньё со стороны корпорации, чтобы скрыть истинную причину паранормального поведения аниматроников, а именно их одержимость душами детей, которых Уильям Афтон в костюме Пружинного Бонни убил в 1985 году[1], заманив в Безопасную комнату.
+            </p>
+        </div>
+    </section>
+
+    <section id="contact">
+        <h2>Связь с нами</h2>
+        <form>
+            <input type="text" placeholder="Ваше имя" required>
+            <textarea placeholder="Ваше сообщение" required></textarea>
+            <button type="submit">Отправить</button>
+        </form>
+    </section>
+
+
+    <footer>
+        <div class="footer-container">
+          <div class="footer-item">
+            <h3>contact us</h3>
+            <ul>
+              <li><a href="#">example.com@gmail.com</a></li>
+              <li><a href="#">+01920390212223</a></li>
+              <li><a href="#">idk</a></li>
+            </ul>
+          </div>
+          <div class="footer-item">
+            <h3>community</h3>
+            <ul>
+              <li><a href="#">Community Central</a></li>
+              <li><a href="#">Help</a></li>
+              <li><a href="#">support</a></li>
+            </ul>
+          </div>
+          <div class="footer-item">
+            <h3>fangames</h3>
+            <ul>
+              <li><a href="#">Forgotten At Fredbear's</a></li>
+              <li><a href="#">JR’s: Enter The Flipside</a></li>
+              <li><a href="#">Five Nights at Candy's 4 (Official)</a></li>
+            </ul>
+          </div>
+            <p class="copyright">FNaF Universe © 2025</p>
+          </div>
+        </div>
+      </footer>
+
+</body>
+<script>
+    const characters = {
+    freddy: {
+        title: "Freddy Fazbear",
+        description: "Главный аниматроник. Медведь, руководящий группой в Freddy Fazbear's Pizza.",
+        image: "https://i.pinimg.com/236x/dc/15/19/dc1519b90a503991e009d6a439bf5b61.jpg"
+        
+    },
+    chica: {
+        title: "Chica the Chicken",
+        description: "Птица-аниматроник. Любит пиццу и активно появляется ночью.",
+        image: "https://i.pinimg.com/236x/dc/15/19/dc1519b90a503991e009d6a439bf5b61.jpg"
+    },
+    bonnie: {
+        title: "Bonnie the Bunny",
+        description: "Фиолетовый заяц, один из первых аниматроников, который начинает двигаться ночью.",
+        image: "https://i.pinimg.com/236x/dc/15/19/dc1519b90a503991e009d6a439bf5b61.jpg"
+    },
+    foxy: {
+        title: "Foxy the Fox",
+        description: "Фокси всегда выходит из-за занавеса в Пиратской бухте. ",
+        image: "https://i.pinimg.com/236x/dc/15/19/dc1519b90a503991e009d6a439bf5b61.jpg"
+    },
+};
+
+
+const cards = document.querySelectorAll('.card');
+const modal = document.getElementById('modal');
+const modalTitle = document.getElementById('modal-title');
+const modalDescription = document.getElementById('modal-description');
+const modalImage = document.getElementById('modal-image');
+const modalClose = document.getElementById('modal-close');
+
+cards.forEach(card => {
+    card.addEventListener('click', () => {
+        const character = card.dataset.character;
+        modalTitle.textContent = characters[character].title;
+        modalDescription.textContent = characters[character].description;
+        modalImage.src = characters[character].image;
+        modalImage.alt = characters[character].title;
+        modal.classList.remove('hidden');
+    });
+});
+
+
+modalClose.addEventListener('click', () => {
+    modal.classList.add('hidden');
+});
+modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+        modal.classList.add('hidden');
+    }
+});
+
+
+const themeToggle = document.getElementById('theme-toggle');
+let darkTheme = true;
+
+themeToggle.addEventListener('click', () => {
+    if (darkTheme) {
+        document.documentElement.style.setProperty('--bg-color', '#ffffff');
+        document.documentElement.style.setProperty('--text-color', '#000000');
+        document.documentElement.style.setProperty('--accent-color', '#5c115c');
+        darkTheme = false;
+    } else {
+        document.documentElement.style.setProperty('--bg-color', '#0a0a0a');
+        document.documentElement.style.setProperty('--text-color', '#ffffff');
+        document.documentElement.style.setProperty('--accent-color', '#5c115c');
+        darkTheme = true;
+    }
+});
+
+
+
+
+startButton.addEventListener('click', () => {
+    clearInterval(timer);
+    timeLeft = 10;
+    resultDisplay.textContent = '';
+    timerDisplay.textContent = `Осталось: ${timeLeft} секунд`;
+
+    timer = setInterval(() => {
+        timeLeft--;
+        timerDisplay.textContent = `Осталось: ${timeLeft} секунд`;
+
+        if (timeLeft <= 0) {
+            clearInterval(timer);
+            resultDisplay.textContent = "Вы выжили до утра! 🎉";
+        }
+    }, 1000);
+});
+
+
+
+
+
+</script>
+
+</html>
+
